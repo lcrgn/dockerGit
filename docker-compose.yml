@@ -1,0 +1,52 @@
+services:
+  # on configure nginx
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+    # port que l'on va utiliser dans notre container
+      - 8080:80
+    networks:
+      - internal
+    volumes:
+      - ./src/:/var/www/html/
+      # permettre d'avoir des axplications dans notre dossier log dans le cas ou il y a une erreur dans le serveur nginx
+      - ./logs/nginx:/var/log/nginx
+  # on configure php
+  php:
+    container_name: php-container
+    hostname: php
+    build: 
+      context: .
+      dockerfile: php_code/Dockerfile
+    networks:
+      - internal
+    volumes:
+      - ./logs/php.log:/var/log/fpm-php.www.log
+
+
+  # on configure mariadb
+
+
+  # mariadb:
+  #  image: mariadb
+    # container_name: mariadb-container
+    # hostname: mariadb
+    # env_file définit des variables d'environnement 
+
+
+    #env_file:
+    #  - ./env/mariadb.env
+
+
+    #networks:
+    #  - internal
+
+
+# on ajoute le network pour relier chaque container entre eux 
+networks:
+  internal:
+  # le type de driver le plus utliser 
+  # bridge -> paramètre par défaut 
+    driver: bridge
